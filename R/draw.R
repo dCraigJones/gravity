@@ -1,3 +1,27 @@
+# =============================================================================
+#      Filename:  draw.R
+#        Author:  D Craig Jones <jones.dCraig@gmail.com>
+#    Maintainer:  D Craig Jones <jones.dCraig@gmail.com>
+#
+#   Description:  [Describe the program's goal, IN DETAIL.]
+#
+# -----------------------------------------------------------------------------
+#     Constants:
+#
+#    Parameters:
+#
+# -----------------------------------------------------------------------------
+#
+#  Deficiencies:
+#
+#         To-Do:
+#                 • Add "srt" parameter to text call to rotate text.
+#                 • Add user-select isoflow line.
+#                 • Add label to Manning Equation Line "DM"; Lanfear-Coll "LC"; and Shu.. "SS"
+#                 • Add Function for "SS", currently in sandbox
+# =============================================================================
+
+
 #https://www.adsenv.com/sites/default/files/whitepapers/sg%2009%20paper%202010-06-11.pdf
 #Enfinger, K.L. PE and Mitchell, P.S. PE (2010) "Scattergraph Principles and Practice: Evaluating Self-Cleansing in Existing Sewers Using the Tractive Force Method". ADS Environmental Services.
 
@@ -17,6 +41,8 @@ draw_self_cleaning <- function(d_in, n, p_mm=1, linecolor="grey50", linetype=4, 
 }
 
 draw_scattergraph <- function(D=8, max.v=5, step.v=1, max.d=16, step.d=2) {
+  SCATTERGRAPH_PARAMS <<- NULL
+
   padding.v <- 0.15
 
   # Draw Scattergraph Template
@@ -76,6 +102,13 @@ draw_scattergraph <- function(D=8, max.v=5, step.v=1, max.d=16, step.d=2) {
   graphics::axis(1, at=seq(0,max.v,step.v))
 }
 
+
+# Enfinger, K.L. PE and Stevens, P.L. PE (2006)
+#"Scattergraph Principles and Practice: Practical Application of the Froude Number to Flow Monitor Data".
+# ADS Environmental Services.
+# https://www.adsenv.com/sites/default/files/whitepapers/sg%2005%20paper%202008-07-31.pdf
+
+
 draw_isofroude <- function(d_in=8, Fr=1, max.v=5, linecolor="grey50", linetype=6, v_label=max.v*.85) {
   d_ft <- d_in/12
   y_ft <- seq(0,d_ft,length.out=1000)
@@ -98,7 +131,7 @@ draw_isofroude <- function(d_in=8, Fr=1, max.v=5, linecolor="grey50", linetype=6
 
 }
 
-draw_isoflow <- function(d=8,q_gpm, max.v=5, max.d=16, linecolor="#40AE49", linetype=1) {
+draw_isoflow <- function(d=8,q_gpm, max.v=5, max.d=16, linecolor="grey25", linetype=1) {
   y <- seq(0,max.d,length.out=1000)
 
   area <- rep(3.1416*d^2/4, length(y))
@@ -115,6 +148,9 @@ draw_isoflow <- function(d=8,q_gpm, max.v=5, max.d=16, linecolor="#40AE49", line
   v_fps[v_fps>max.v]=NA
 
   graphics::lines(v_fps, y, col=linecolor, lty=linetype, lwd=1)
+
+  text_label <- paste0(prettyNum(q_gpm, big.mark=","), " gpm")
+  graphics::text(0.408*q_gpm/d^2, d+1, text_label, pos=4, cex=0.80, col=linecolor)
 }
 
 draw_manning <- function(d=8, n=0.013, s=0.4/100, linecolor="black", linetype=2) {
@@ -131,8 +167,8 @@ draw_manning <- function(d=8, n=0.013, s=0.4/100, linecolor="black", linetype=2)
   graphics::lines(v_fps, y, col=linecolor, lty=linetype, lwd=2)
 }
 
-# draw_scattergraph(24, 5, 1, 30, 6)
-# draw_manning(24, 0.01,0.08/100)
-# draw_isofroude(24, 0.7)
-# draw_self_cleaning(24, 0.01)
-# draw_isoflow(24,2000,5,30)
+draw_scattergraph(24, 5, 1, 30, 6)
+draw_manning(24, 0.01,0.08/100)
+draw_isofroude(24, 0.7)
+draw_self_cleaning(24, 0.01)
+draw_isoflow(24,2000,5,30)
